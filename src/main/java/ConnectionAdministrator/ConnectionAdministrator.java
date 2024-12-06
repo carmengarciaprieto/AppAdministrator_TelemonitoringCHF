@@ -1,0 +1,105 @@
+package ConnectionAdministrator;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import pojos.Administrator;
+
+public class ConnectionAdministrator {
+
+    private static Socket socket;
+    private static PrintWriter printWriter;
+    private static BufferedReader bufferedReader;
+
+    private static void connectToServer() throws IOException {
+        if (socket == null || socket.isClosed()) {
+            System.out.println("Connecting to server...");
+            socket = new Socket("localhost", 9090); // cambiar mas adelante 
+            printWriter = new PrintWriter(socket.getOutputStream(), true);
+            bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        }
+    }
+
+    public static void closeConnection() {
+        try {
+
+            printWriter.println("LOGOUT");
+
+            if (printWriter != null) {
+                printWriter.close();
+            }
+            if (bufferedReader != null) {
+                bufferedReader.close();
+            }
+            if (socket != null && !socket.isClosed()) {
+                socket.close();
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ConnectionAdministrator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static boolean sendRegisterServer(Administrator administrator) {
+        try {
+            connectToServer();
+            printWriter.println("REGISTER_ADMINISTRATOR");
+            printWriter.println(administrator.getDni());
+            printWriter.println(administrator.getPassword());
+
+            String serverResponse = bufferedReader.readLine();
+            if ("VALID".equals(serverResponse)) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (IOException e) {
+            Logger.getLogger(ConnectionAdministrator.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }/* finally {
+            // printWriter.println("STOP");
+            closeConnection(); // correct?
+        }*/
+    }
+
+    public static boolean validateLogin(String dni, String password) {
+        try {
+            connectToServer();
+            printWriter.println("LOGIN_ADMINISTRATOR");
+            printWriter.println(dni);
+            printWriter.println(password);
+
+            String serverResponse = bufferedReader.readLine();
+            if ("VALID".equals(serverResponse)) {
+                System.out.println("Login successful!");
+                return true;
+            } else {
+                System.out.println("Invalid credentials.");
+                return false;
+            }
+
+        } catch (IOException e) {
+            Logger.getLogger(ConnectionAdministrator.class.getName()).log(Level.SEVERE, null, e);
+            return false;
+        }
+        /*finally {
+            //printWriter.println("STOP"); // TO DO VER SI QUITARLO O NO 
+            closeConnection();
+        }*/
+    }
+
+    public static void closeServerApp() throws IOException {
+        try {
+            connectToServer();
+            printWriter.println("SHUTDOWN");
+            System.out.println("Shutdown request sent to the server.");
+        } catch (IOException e) {
+            Logger.getLogger(ConnectionAdministrator.class.getName()).log(Level.SEVERE, null, e);
+        }
+    }
+
+}
+
