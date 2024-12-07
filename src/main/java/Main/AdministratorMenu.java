@@ -1,17 +1,40 @@
 package Main;
 
 import ConnectionAdministrator.ConnectionAdministrator;
+import Utilities.Encryption;
 import Utilities.Utilities;
 import java.io.IOException;
 import pojos.Administrator;
 
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class Main {
+public class AdministratorMenu {
+
+    private static Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
+        String ip_address_valid = null;
+        try {
+
+            ip_address_valid = Utilities.getValidIPAddress();
+            try {
+                ConnectionAdministrator.connectToServer(ip_address_valid);
+            } catch (IOException ex) {
+                Logger.getLogger(AdministratorMenu.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            mainMenu();
+        } finally {
+            ConnectionAdministrator.closeConnection(); // Cierra la conexión al finalizar
+        }
+    }
+    
+    
+    public static void mainMenu() {
         Scanner scanner = new Scanner(System.in);
         boolean exit = false;
+        String encryptedPassword;
 
         while (!exit) {
             System.out.println("=== Main Menu ===");
@@ -32,6 +55,7 @@ public class Main {
                     dni = scanner.nextLine();
                     System.out.print("Enter your Password: ");
                     password = scanner.nextLine();
+                    encryptedPassword = Encryption.encryptPasswordMD5(password);
 
                     Administrator administrator = new Administrator(dni, password);
 
@@ -60,6 +84,7 @@ public class Main {
 
                     System.out.println("Enter password: ");
                     password = scanner.nextLine();
+                    encryptedPassword = Encryption.encryptPasswordMD5(password);
 
                     try {
                         // Valida login
@@ -73,13 +98,14 @@ public class Main {
                         }
 
                     } catch (IOException e) {
-                        System.out.println("ERROR:" +e);
+                        System.out.println("ERROR:" + e);
                     }
                     break;
 
                 case 3:
                     System.out.println("Exiting the program...");
-                    exit = true;
+                    ConnectionAdministrator.closeConnection();
+                    System.exit(0);
                     break;
 
                 default:
@@ -90,13 +116,19 @@ public class Main {
         scanner.close();
     }
 
-    private static void administratorMenu(String administratorDni) throws IOException  {
+    private static void administratorMenu(String administratorDni) throws IOException {
         System.out.println("Do you want to close the Server App? Type yes or no");
         Scanner scanner = new Scanner(System.in);
         String response = scanner.nextLine().trim().toLowerCase();
-        System.out.println(response);
+
         if ("yes".equals(response)) {
-            ConnectionAdministrator.closeServerApp();
+            int connectedClients = ConnectionAdministrator.getNumberOfConnectedClients();
+            if (connectedClients <= 1) {
+                ConnectionAdministrator.closeServerApp();
+                 System.out.println("The Server App is shutting down...");
+            } else {
+                System.out.println("Cannot shut down the Server App. There are " + connectedClients + " clients still connected.");
+            }
         } else if ("no".equals(response)) {
             System.out.println("The Server App will continue running.");
         } else {

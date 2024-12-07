@@ -1,4 +1,5 @@
-Main/Main.class
 pojos/Administrator.class
 ConnectionAdministrator/ConnectionAdministrator.class
+Utilities/Encryption.class
+Main/AdministratorMenu.class
 Utilities/Utilities.class

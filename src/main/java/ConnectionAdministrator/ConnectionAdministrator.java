@@ -15,10 +15,10 @@ public class ConnectionAdministrator {
     private static PrintWriter printWriter;
     private static BufferedReader bufferedReader;
 
-    private static void connectToServer() throws IOException {
+    public static void connectToServer(String ip_address) throws IOException {
         if (socket == null || socket.isClosed()) {
             System.out.println("Connecting to server...");
-            socket = new Socket("localhost", 9090); // cambiar mas adelante 
+            socket = new Socket(ip_address, 9090); // cambiar mas adelante 
             printWriter = new PrintWriter(socket.getOutputStream(), true);
             bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         }
@@ -45,7 +45,6 @@ public class ConnectionAdministrator {
 
     public static boolean sendRegisterServer(Administrator administrator) {
         try {
-            connectToServer();
             printWriter.println("REGISTER_ADMINISTRATOR");
             printWriter.println(administrator.getDni());
             printWriter.println(administrator.getPassword());
@@ -67,7 +66,6 @@ public class ConnectionAdministrator {
 
     public static boolean validateLogin(String dni, String password) {
         try {
-            connectToServer();
             printWriter.println("LOGIN_ADMINISTRATOR");
             printWriter.println(dni);
             printWriter.println(password);
@@ -91,15 +89,20 @@ public class ConnectionAdministrator {
         }*/
     }
 
-    public static void closeServerApp() throws IOException {
+    public static int getNumberOfConnectedClients() {
         try {
-            connectToServer();
-            printWriter.println("SHUTDOWN");
-            System.out.println("Shutdown request sent to the server.");
-        } catch (IOException e) {
+            printWriter.println("GET_CLIENTS_CONNECTED");
+            String response = bufferedReader.readLine();
+            return Integer.parseInt(response); // El servidor debe responder con un entero
+        } catch (IOException | NumberFormatException e) {
             Logger.getLogger(ConnectionAdministrator.class.getName()).log(Level.SEVERE, null, e);
+            return -1;
         }
     }
 
-}
+    public static void closeServerApp() throws IOException {
+        printWriter.println("SHUTDOWN");
+        System.out.println("Shutdown request sent to the server.");
+    }
 
+}
