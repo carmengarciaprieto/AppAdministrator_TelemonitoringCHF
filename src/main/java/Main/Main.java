@@ -67,12 +67,13 @@ public class Main {
                             System.out.println("\nDoctor login successful!");
                             // loginSuccess = true; 
                             administratorMenu(dni); // Redirige al menú del doctor
+                        } else {
+                            System.out.println("ERROR. Make sure you entered your DNI and password correctly.");
+                            System.out.println("If you're not registered, please do it first. \n");
                         }
 
-                    } catch (Exception e) {
-                        System.out.println("ERROR. Make sure you entered your DNI and password correctly.");
-                        System.out.println("If you're not registered, please do it first. \n");
-
+                    } catch (IOException e) {
+                        System.out.println("ERROR:" +e);
                     }
                     break;
 
@@ -89,18 +90,18 @@ public class Main {
         scanner.close();
     }
 
-    private static void administratorMenu(String administratorDni) throws IOException {
+    private static void administratorMenu(String administratorDni) throws IOException  {
         System.out.println("Do you want to close the Server App? Type yes or no");
         Scanner scanner = new Scanner(System.in);
         String response = scanner.nextLine().trim().toLowerCase();
-        System.out.println(response); 
+        System.out.println(response);
         if ("yes".equals(response)) {
             ConnectionAdministrator.closeServerApp();
         } else if ("no".equals(response)) {
             System.out.println("The Server App will continue running.");
         } else {
             System.out.println("Invalid input. Please type 'yes' or 'no'.");
-            administratorMenu(administratorDni); 
+            administratorMenu(administratorDni);
         }
     }
 }
