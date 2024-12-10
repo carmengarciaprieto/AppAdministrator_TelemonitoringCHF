@@ -62,7 +62,6 @@ public class Utilities {
         boolean ok = true;
 
         if (id.length() != 9) {
-            // System.out.println("Invalid DNI, try again");
             ok = false;
 
             return ok;
@@ -71,7 +70,6 @@ public class Utilities {
         for (int i = 0; i < 8; i++) {
             if (!Character.isDigit(id.charAt(i))) {
                 ok = false;
-                //System.out.println("Invalid DNI, try again");
                 return ok;
             }
         }
@@ -82,7 +80,6 @@ public class Utilities {
         char valid = validLeters.charAt(indexLeter);
 
         if (id.toUpperCase().charAt(8) != valid) {
-            //System.out.println("Invalid DNI, try again");
             ok = false;
             return ok;
         }
@@ -171,14 +168,14 @@ public class Utilities {
         String ipAddress;
 
         while (true) {
-            System.out.println("\nPor favor, introduce una dirección IP válida: ");
+            System.out.println("\nPlease, introduce a valid IP address: ");
             ipAddress = scanner.nextLine();
 
             if (valid_ipAddress(ipAddress)) {
-                System.out.println("\nDirección IP válida: " + ipAddress);
+                System.out.println("\nValid IP address: " + ipAddress);
                 break;
             } else {
-                System.out.println("La dirección IP no es válida o no responde. Inténtalo de nuevo.");
+                System.out.println("IP address is not valid or not working. Try again.");
             }
         }
 

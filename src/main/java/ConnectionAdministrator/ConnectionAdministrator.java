@@ -58,10 +58,7 @@ public class ConnectionAdministrator {
         } catch (IOException e) {
             Logger.getLogger(ConnectionAdministrator.class.getName()).log(Level.SEVERE, null, e);
             return false;
-        }/* finally {
-            // printWriter.println("STOP");
-            closeConnection(); // correct?
-        }*/
+        }
     }
 
     public static boolean validateLogin(String dni, String password) {
@@ -83,10 +80,6 @@ public class ConnectionAdministrator {
             Logger.getLogger(ConnectionAdministrator.class.getName()).log(Level.SEVERE, null, e);
             return false;
         }
-        /*finally {
-            //printWriter.println("STOP"); // TO DO VER SI QUITARLO O NO 
-            closeConnection();
-        }*/
     }
 
     public static int getNumberOfConnectedClients() {
