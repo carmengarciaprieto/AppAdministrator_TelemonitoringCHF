@@ -11,11 +11,9 @@ import javax.swing.*;
 import java.awt.*;
 
 import java.io.IOException;
-import java.net.BindException;
 import java.net.ConnectException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 public class AdministratorMenu {
 
@@ -24,66 +22,61 @@ public class AdministratorMenu {
     private static String password;
     private static String encryptedPassword;
 
-   public static void main(String[] args) {
-    SwingUtilities.invokeLater(() -> {
-        try {
-            // Loop to get a valid IP address
-            String ipAddress = null;
-            while (ipAddress == null || ipAddress.isEmpty() || !Utilities.valid_ipAddress(ipAddress)) {
-                if (ipAddress == null) {
-                    ipAddress = JOptionPane.showInputDialog(null,
-                            "Please enter a valid IP address:",
-                            "IP Address Input",
-                            JOptionPane.QUESTION_MESSAGE);
-                } else {
-                    ipAddress = JOptionPane.showInputDialog(null,
-                            "The IP address entered is invalid. Please try again:",
-                            "IP Address Input",
-                            JOptionPane.ERROR_MESSAGE);
-                }
-
-                // Exit gracefully if the user cancels the input
-                if (ipAddress == null) {
-                    JOptionPane.showMessageDialog(null, "No IP address entered. Exiting.");
-                    System.exit(0);
-                }
-            }
-
-            // Attempt to connect to the server
-            ConnectionAdministrator.connectToServer(ipAddress);
-
-            // Launch the GUI
-            new AdministratorMenu().createAndShowGUI();
-        } catch (IOException ex) {
-            Logger.getLogger(AdministratorMenu.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Failed to connect to the server. Exiting.");
-            System.exit(1);
-        }
-
-        try {
-            System.out.println("\nPlease enter a valid IP address: ");
-            String ip_address_valid = Utilities.getValidIPAddress();
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
             try {
-                ConnectionAdministrator.connectToServer(ip_address_valid);
-            } catch (ConnectException ce) {
-                System.out.println("Connection refused: The server might be unavailable or the IP address is incorrect. Please try again.");
-                System.exit(0);
-               // Logger.getLogger(AdministratorMenu.class.getName()).log(Level.SEVERE, "Connection refused", ce);
-            } catch (BindException be) {
-                System.out.println("Port already in use: Please ensure no other application is using the required port.");
-                 System.exit(0);
-              //  Logger.getLogger(AdministratorMenu.class.getName()).log(Level.SEVERE, "Port already in use", be);
-            } catch (IOException ex) {
-                System.out.println("We're sorry, the system is currently unavailable. Please try again later.");
-                Logger.getLogger(AdministratorMenu.class.getName()).log(Level.SEVERE, "IO Exception", ex);
-            }
-            
-        } finally {
-            ConnectionAdministrator.closeConnection(); // Close the connection at the end
-        }
-    });
-}
+                // Loop to get a valid IP address
+                ipAddress = null;
+                while (ipAddress == null || ipAddress.isEmpty() || !Utilities.valid_ipAddress(ipAddress)) {
+                    if (ipAddress == null) {
+                        ipAddress = JOptionPane.showInputDialog(null,
+                                "Please enter a valid IP address:",
+                                "IP Address Input",
+                                JOptionPane.QUESTION_MESSAGE);
+                    } else {
+                        ipAddress = JOptionPane.showInputDialog(null,
+                                "The IP address entered is invalid. Please try again:",
+                                "IP Address Input",
+                                JOptionPane.ERROR_MESSAGE);
+                    }
 
+                    // Exit gracefully if the user cancels the input
+                    if (ipAddress == null) {
+                        JOptionPane.showMessageDialog(null, "No IP address entered. Exiting.");
+                        System.exit(0);
+                    }
+                }
+
+                // Attempt to connect to the server
+                try {
+                    ConnectionAdministrator.connectToServer(ipAddress);
+                } catch (ConnectException e) {
+                    JOptionPane.showMessageDialog(null,
+                            "Unable to connect to the server. Please check if the server is running at the specified IP: " + ipAddress,
+                            "Connection Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    Logger.getLogger(AdministratorMenu.class.getName()).log(Level.WARNING,
+                            "Failed to connect to the server at IP: " + ipAddress);
+                    System.exit(0); // Exit gracefully
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null,
+                            "Unexpected error during connection: " + e.getMessage(),
+                            "Connection Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    Logger.getLogger(AdministratorMenu.class.getName()).log(Level.SEVERE,
+                            "Unexpected error occurred while connecting to the server", e);
+                    System.exit(0); // Exit gracefully
+                }
+
+                // Launch the GUI if connection succeeds
+                new AdministratorMenu().createAndShowGUI();
+            } catch (Exception ex) {
+                Logger.getLogger(AdministratorMenu.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Unexpected error. Exiting.");
+                System.exit(1);
+            }
+        });
+    }
 
     public void createAndShowGUI() {
         // Create the frame
@@ -148,28 +141,26 @@ public class AdministratorMenu {
         registrationDialog.setLayout(new GridLayout(4, 2, 10, 10));
 
         JLabel dniLabel = new JLabel("      DNI:");
-        dniLabel.setFont(new Font("Calibri", Font.PLAIN, 18)); // Set font to Calibri and size to 18
+        dniLabel.setFont(new Font("Calibri", Font.PLAIN, 18));
 
         JTextField dniField = new JTextField();
-        dniField.setFont(new Font("Calibri", Font.PLAIN, 16)); // Set font to Calibri and size to 16
+        dniField.setFont(new Font("Calibri", Font.PLAIN, 16));
 
         JLabel passwordLabel = new JLabel("     Password:");
-        passwordLabel.setFont(new Font("Calibri", Font.PLAIN, 18)); // Set font to Calibri and size to 18
+        passwordLabel.setFont(new Font("Calibri", Font.PLAIN, 18));
 
         JPasswordField passwordField = new JPasswordField();
-        passwordField.setFont(new Font("Calibri", Font.PLAIN, 16)); // Set font to Calibri and size to 16
+        passwordField.setFont(new Font("Calibri", Font.PLAIN, 16));
 
-
-        // Custom Rounded Button for "Register" and "Cancel"        
         JButton cancelButton = new RoundedButton("Cancel", Color.WHITE);
-        JButton registerButton = new RoundedButton("Register", new Color(135, 206, 235)); // Sky blue
+        JButton registerButton = new RoundedButton("Register", new Color(135, 206, 235));
 
         registrationDialog.add(dniLabel);
         registrationDialog.add(dniField);
         registrationDialog.add(passwordLabel);
         registrationDialog.add(passwordField);
-        registrationDialog.add(new JLabel()); // Spacer
-        registrationDialog.add(new JLabel()); // Spacer
+        registrationDialog.add(new JLabel());
+        registrationDialog.add(new JLabel());
         registrationDialog.add(cancelButton);
         registrationDialog.add(registerButton);
 
@@ -199,7 +190,6 @@ public class AdministratorMenu {
 
         registrationDialog.setVisible(true);
     }
-
 
     private void showLoginForm(JFrame parentFrame) {
         JDialog loginDialog = new JDialog(parentFrame, "Administrator Log In", true);
@@ -276,15 +266,15 @@ public class AdministratorMenu {
         JButton submitButton = new RoundedButton("Submit", new Color(135, 206, 235)); // Sky blue
 
         // Add the label to the top section (spans both columns)
-        gbc.gridx = 0; 
-        gbc.gridy = 0; 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.gridwidth = 2; // Span across two columns
         gbc.insets = new Insets(10, 10, 10, 10); // Padding around the label
         gbc.anchor = GridBagConstraints.CENTER; // Center the label in its cell
         adminFrame.add(label, gbc);
 
         // Add the response field (below the label, spans both columns)
-        gbc.gridx = 0; 
+        gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 2; // Span across two columns
         gbc.fill = GridBagConstraints.HORIZONTAL; // Make the field fill horizontally
@@ -309,7 +299,7 @@ public class AdministratorMenu {
                         JOptionPane.showMessageDialog(adminFrame, "Server shutting down.");
                         System.exit(0);
                     } else {
-                        JOptionPane.showMessageDialog(adminFrame, "Cannot shut down. " + (connectedClients-1) + " clients connected.");
+                        JOptionPane.showMessageDialog(adminFrame, "Cannot shut down. " + (connectedClients - 1) + " clients connected.");
                     }
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(adminFrame, "Error: " + ex.getMessage());
