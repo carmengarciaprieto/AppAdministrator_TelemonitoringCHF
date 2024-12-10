@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.util.List;
 import java.util.Scanner;
-import pojos.Administrator;
 
 public class Utilities {
 

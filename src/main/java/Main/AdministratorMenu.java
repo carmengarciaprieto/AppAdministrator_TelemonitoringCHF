@@ -3,27 +3,13 @@ package Main;
 import ConnectionAdministrator.ConnectionAdministrator;
 import Utilities.Encryption;
 import Utilities.Utilities;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import pojos.Administrator;
 
 import Swing.RoundedButton;
 
-import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +25,7 @@ public class AdministratorMenu {
         SwingUtilities.invokeLater(() -> {
             try {
                 // Loop to get a valid IP address
-                String ipAddress = null;
+                ipAddress = null;
                 while (ipAddress == null || ipAddress.isEmpty() || !Utilities.valid_ipAddress(ipAddress)) {
                     if (ipAddress == null) {
                         ipAddress = JOptionPane.showInputDialog(null,
