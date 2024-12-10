@@ -283,7 +283,7 @@ public class AdministratorMenu {
                         JOptionPane.showMessageDialog(adminFrame, "Server shutting down.");
                         System.exit(0);
                     } else {
-                        JOptionPane.showMessageDialog(adminFrame, "Cannot shut down. " + connectedClients + " clients connected.");
+                        JOptionPane.showMessageDialog(adminFrame, "Cannot shut down. " + (connectedClients-1) + " clients connected.");
                     }
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(adminFrame, "Error: " + ex.getMessage());
