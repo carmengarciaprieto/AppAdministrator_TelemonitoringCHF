@@ -79,61 +79,74 @@ public class AdministratorMenu {
     }
 
     public void createAndShowGUI() {
-        // Create the frame
-        JFrame frame = new JFrame("Administrator Menu");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(750, 500);
-        frame.setMinimumSize(new Dimension(400, 300));
+    // Create the frame
+    JFrame frame = new JFrame("Administrator Menu");
+    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setSize(750, 500);
+    frame.setMinimumSize(new Dimension(400, 300));
 
-        // Set layout
-        frame.setLayout(new BorderLayout());
+    // Set layout
+    frame.setLayout(new BorderLayout());
 
-        // Create title label
-        JLabel titleLabel = new JLabel("ADMINISTRATOR MENU", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Calibri", Font.BOLD, 40));
-        titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
-        frame.add(titleLabel, BorderLayout.NORTH);
+    // Create title label
+    JLabel titleLabel = new JLabel("ADMINISTRATOR MENU", SwingConstants.CENTER);
+    titleLabel.setFont(new Font("Calibri", Font.BOLD, 40));
+    titleLabel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+    frame.add(titleLabel, BorderLayout.NORTH);
 
-        // Create panel for buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(3, 1, 10, 10));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+    // Create panel for buttons
+    JPanel buttonPanel = new JPanel();
+    buttonPanel.setLayout(new GridLayout(4, 1, 10, 10)); // Adjusted to 4 rows for the Logout button
+    buttonPanel.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 
-        // Create buttons with appropriate fonts and sizes
-        JButton registerButton = new JButton("Register");
-        registerButton.setFont(new Font("Calibri", Font.PLAIN, 30));
-        registerButton.setPreferredSize(new Dimension(300, 50));
+    // Create buttons
+    JButton registerButton = new JButton("Register");
+    registerButton.setFont(new Font("Calibri", Font.PLAIN, 30));
+    registerButton.setPreferredSize(new Dimension(300, 50));
 
-        JButton loginButton = new JButton("Log In");
-        loginButton.setFont(new Font("Calibri", Font.PLAIN, 30));
-        loginButton.setPreferredSize(new Dimension(300, 50));
+    JButton loginButton = new JButton("Log In");
+    loginButton.setFont(new Font("Calibri", Font.PLAIN, 30));
+    loginButton.setPreferredSize(new Dimension(300, 50));
 
-        JButton exitButton = new JButton("Exit");
-        exitButton.setFont(new Font("Calibri", Font.PLAIN, 30));
-        exitButton.setPreferredSize(new Dimension(300, 50));
+    JButton logoutButton = new JButton("Logout");
+    logoutButton.setFont(new Font("Calibri", Font.PLAIN, 30));
+    logoutButton.setPreferredSize(new Dimension(300, 50));
 
-        // Add buttons to panel
-        buttonPanel.add(registerButton);
-        buttonPanel.add(loginButton);
-        buttonPanel.add(exitButton);
+    JButton exitButton = new JButton("Exit");
+    exitButton.setFont(new Font("Calibri", Font.PLAIN, 30));
+    exitButton.setPreferredSize(new Dimension(300, 50));
 
-        // Add button panel to frame
-        frame.add(buttonPanel, BorderLayout.CENTER);
+    // Add buttons to panel
+    buttonPanel.add(registerButton);
+    buttonPanel.add(loginButton);
+    buttonPanel.add(logoutButton);
+    buttonPanel.add(exitButton);
 
-        // Set action listeners for buttons
-        registerButton.addActionListener(e -> showRegistrationForm(frame));
-        loginButton.addActionListener(e -> showLoginForm(frame));
-        exitButton.addActionListener(e -> {
-            int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?", "Exit Confirmation",
-                    JOptionPane.YES_NO_OPTION);
-            if (choice == JOptionPane.YES_OPTION) {
-                System.exit(0);
-            }
-        });
+    // Add button panel to frame
+    frame.add(buttonPanel, BorderLayout.CENTER);
 
-        // Display the frame
-        frame.setVisible(true);
-    }
+    // Set action listeners
+    registerButton.addActionListener(e -> showRegistrationForm(frame));
+    loginButton.addActionListener(e -> showLoginForm(frame));
+
+    // Logout button logic
+    logoutButton.addActionListener(e -> {
+        ConnectionAdministrator.closeConnection(); // Call method to close user connection
+        JOptionPane.showMessageDialog(frame, "Session closed successfully.");
+    });
+
+    exitButton.addActionListener(e -> {
+        int choice = JOptionPane.showConfirmDialog(frame, "Are you sure you want to exit?", "Exit Confirmation",
+                JOptionPane.YES_NO_OPTION);
+        if (choice == JOptionPane.YES_OPTION) {
+            System.exit(0);
+        }
+    });
+
+    // Display the frame
+    frame.setVisible(true);
+}
+
 
     private void showRegistrationForm(JFrame parentFrame) {
         JDialog registrationDialog = new JDialog(parentFrame, "Administrator Registration", true);
